@@ -440,9 +440,9 @@
         reject(new TypeError('Network request failed'))
       }
       
-      xhr.onabort = function() {
+      /*xhr.onabort = function() {
         reject(new TypeError('Network request aborted'))
-      }
+      }*/
 
       xhr.ontimeout = function() {
         reject(new TypeError('Network request failed'))
