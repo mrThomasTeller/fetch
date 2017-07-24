@@ -1,9 +1,9 @@
 (function(self) {
   'use strict';
 
-  if (self.fetch) {
+  /*if (self.fetch) {
     return
-  }
+  }*/
 
   var support = {
     searchParams: 'URLSearchParams' in self,
@@ -420,9 +420,10 @@
   self.Response = Response
 
   self.fetch = function(input, init) {
-    return new Promise(function(resolve, reject) {
+    var xhr;
+    var promise = new Promise(function(resolve, reject) {
       var request = new Request(input, init)
-      var xhr = new XMLHttpRequest()
+      xhr = new XMLHttpRequest()
 
       xhr.onload = function() {
         var options = {
@@ -437,6 +438,10 @@
 
       xhr.onerror = function() {
         reject(new TypeError('Network request failed'))
+      }
+      
+      xhr.onabort = function() {
+        reject(new TypeError('Network request aborted'))
       }
 
       xhr.ontimeout = function() {
@@ -461,6 +466,12 @@
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
+    
+    promise.abort = function() {
+      xhr.abort()
+    }
+    
+    return promise;
   }
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
